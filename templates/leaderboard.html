@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Leaderboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="navbar">
+    <h3>🏆 GLOBAL LEADERBOARD</h3>
+    <a href="/dashboard">Dashboard</a>
+</div>
+
+<div class="center" style="padding-top: 40px;">
+    <div class="card" style="max-width: 600px;">
+        <h2 style="margin-top:0; color:#ffd700; text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);">Top Performers</h2>
+        <p style="color:#aaa;">Ranked by Experience Points (XP)</p>
+        
+        <div style="margin-top:30px; text-align:left;">
+            {% if data %}
+                {% for u, xp in data %}
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.3); padding:15px 20px; border-radius:12px; margin-bottom:10px; border: 1px solid rgba(255,255,255,0.1);">
+                        <span style="font-weight:bold; font-size:18px; color: white;">
+                            {% if loop.index == 1 %}🥇{% elif loop.index == 2 %}🥈{% elif loop.index == 3 %}🥉{% else %}<span style="color:#888;">#{{ loop.index }}</span>{% endif %} 
+                            &nbsp; {{ u }}
+                        </span>
+                        <span style="color:#a8ff78; font-weight:800; background:rgba(168,255,120,0.1); padding: 5px 15px; border-radius: 20px;">⭐ {{ xp }} XP</span>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p style="text-align:center; color:#aaa; font-style:italic;">Leaderboard is empty. Earn XP to rank up!</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="navbar">
+    <h3>AI DASHBOARD</h3>
+    <div>
+        <span style="margin-right:20px; color:#aaa;">Hi, <b>{{ username }}</b></span>
+        <a href="/logout">Logout</a>
+    </div>
+</div>
+
+<div class="center" style="justify-content: flex-start; padding-top: 50px;">
+    <h1 style="text-align:center; margin-bottom: 5px; font-weight:800; font-size:2.5rem;">Welcome <span style="color:var(--primary);">Back</span></h1>
+    
+    <div style="display: flex; gap: 20px; justify-content: center; margin-bottom: 30px; flex-wrap: wrap;">
+        <h3 style="color: #a8ff78; background: rgba(0,0,0,0.3); padding: 10px 20px; border-radius: 20px; margin:0;">
+            ✅ Attendance: {{ att_count }} Days
+        </h3>
+        <h3 style="color: #ffb75e; background: rgba(0,0,0,0.3); padding: 10px 20px; border-radius: 20px; margin:0;">
+            ⭐ Level {{ level }} ({{ xp }} XP)
+        </h3>
+    </div>
+    
+    <div class="dash-container" style="padding: 0;">
+        <a href="/planner" class="dash-card">📘 <br>Make Planner</a>
+        <a href="/focus" class="dash-card" style="border-color: #ff7eb3;">⏱️ <br>Deep Focus</a>
+        <a href="/progress" class="dash-card">📊 <br>See your Progress</a>
+        <a href="/goals" class="dash-card">🎯 <br>Goals & AI</a>
+        <a href="/notes" class="dash-card">📝 <br>Notes & AI Tutor</a>
+        <a href="/report" class="dash-card" style="border-color: #00c6ff;">📄 <br>Export PDF Report</a>
+    </div>
+
+    <div style="margin-top: 30px; display: flex; gap: 20px; justify-content: center; align-items: center;">
+        <button onclick="registerFace()" class="btn-neon" style="width: auto; padding: 10px 30px; margin:0;">📷 Setup Face ID</button>
+        <a href="/predict" style="color:var(--primary); text-decoration:none; font-weight:bold; border: 1px solid var(--primary); padding: 10px 20px; border-radius: 10px;">🔮 Predict Marks</a>
+    </div>
+</div>
+
+<video id="regVideo" autoplay style="display:none;"></video>
+<script>
+    async function registerFace() {
+        alert("Look at the camera. Registration will take 2 seconds.");
+        const video = document.getElementById('regVideo');
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.srcObject = stream;
+            setTimeout(() => {
+                const canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+                canvas.getContext('2d').drawImage(video, 0, 0);
+                const base64Image = canvas.toDataURL('image/jpeg');
+                video.srcObject.getTracks().forEach(t => t.stop());
+
+                fetch('/register_face', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image: base64Image })
+                }).then(res => res.json()).then(data => {
+                    // UPDATED: Show XP Bonus message and refresh page to show new XP
+                    alert("Status: " + data.status + "\nBonus XP Added!");
+                    location.reload();
+                });
+            }, 2000);
+        } catch(err) { alert("Camera Error"); }
+    }
+</script>
+</body>
+</html>

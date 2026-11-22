@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Notes & AI Tutor</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .chat-box {
+            height: 300px;
+            overflow-y: auto;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(0, 198, 255, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: left;
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .msg-user { align-self: flex-end; background: var(--primary); color: white; padding: 10px 15px; border-radius: 15px 15px 0 15px; max-width: 80%; word-wrap: break-word;}
+        .msg-ai { align-self: flex-start; background: rgba(255,255,255,0.1); color: #a8ff78; padding: 10px 15px; border-radius: 15px 15px 15px 0; max-width: 80%; border: 1px solid rgba(168, 255, 120, 0.3); word-wrap: break-word;}
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <h3>📝 NOTES & 🤖 AI TUTOR</h3>
+    <a href="/dashboard">Dashboard</a>
+</div>
+
+<div class="center" style="align-items: flex-start; padding-top: 40px; padding-bottom: 40px;">
+    
+    <div class="dash-container" style="padding:0; margin:0; width: 100%; max-width: 1200px; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));">
+        
+        <div class="card" style="max-width: 100%; margin: 0;">
+            <h2 style="margin-top:0; color:var(--primary); text-align:left;">Make your notes here</h2>
+            <form method="POST">
+                <textarea name="note" placeholder="Write your notes here..." rows="4" required style="width:100%; padding:15px; border-radius:12px; background:rgba(0,0,0,0.2); color:white; border:1px solid rgba(255,255,255,0.2); outline:none; font-size:16px; margin-bottom:15px; resize:vertical;"></textarea>
+                <button type="submit">Save Note</button>
+            </form>
+
+            <div style="margin-top: 30px; text-align:left; max-height: 400px; overflow-y: auto;">
+                {% for n in data %}
+                    <div style="background:rgba(255,255,255,0.05); padding:15px 20px; border-radius:12px; margin-bottom:10px; border-left: 4px solid var(--primary);">
+                        <p style="margin:0;">{{ n[0] }}</p>
+                    </div>
+                {% else %}
+                    <p style="color:#aaa;">No notes yet. Start writing!</p>
+                {% endfor %}
+            </div>
+            <p style="text-align:right; color:var(--secondary); margin-top:20px; font-style:italic; font-weight:bold;">Always Savage.</p>
+        </div>
+
+        <div class="card" style="max-width: 100%; margin: 0; border-color: var(--secondary);">
+            <h2 style="margin-top:0; color:var(--secondary); text-align:left;">🤖 Chat with AI Tutor</h2>
+            <p style="text-align:left; color:#aaa; margin-top:-10px;">Ask your doubts while making notes.</p>
+            
+            <div class="chat-box" id="chatBox">
+                <div class="msg-ai">Hello! I am your AI Tutor. What do you want to learn today?</div>
+            </div>
+
+            <div style="display:flex; gap:10px;">
+                <input type="text" id="chatInput" placeholder="Ask a question..." style="margin:0;" onkeypress="if(event.key === 'Enter') askAI()">
+                <button type="button" onclick="askAI()" class="btn-neon" style="margin:0; width:auto; padding:0 25px;">Ask</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function askAI() {
+        var inputField = document.getElementById("chatInput");
+        var chatBox = document.getElementById("chatBox");
+        var msg = inputField.value.trim();
+        
+        if (!msg) return;
+
+        // User Message UI 
+        chatBox.innerHTML += '<div class="msg-user">' + msg + '</div>';
+        inputField.value = "";
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        // Temp Loading UI
+        var loadingId = "load-" + Date.now();
+        chatBox.innerHTML += '<div class="msg-ai" id="' + loadingId + '">Thinking... 🤔</div>';
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        // API Call to Backend
+        fetch('/api/chat', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ message: msg })
+        })
+        .then(function(res) {
+            return res.json();
+        })
+        .then(function(data) {
+            var loader = document.getElementById(loadingId);
+            if(loader) loader.remove();
+            
+            chatBox.innerHTML += '<div class="msg-ai">' + data.reply + '</div>';
+            chatBox.scrollTop = chatBox.scrollHeight;
+        })
+        .catch(function(err) {
+            var loader = document.getElementById(loadingId);
+            if(loader) loader.innerText = "⚠️ Network Error! Ensure backend is running.";
+        });
+    }
+</script>
+
+</body>
+</html>

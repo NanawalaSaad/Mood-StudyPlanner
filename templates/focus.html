@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head><title>Focus Mode</title><link rel="stylesheet" href="/static/style.css"></head>
+<body>
+<div class="center">
+    <div class="card">
+        <h2>⏱️ Deep Focus Mode</h2>
+        <h1 id="timer" style="font-size: 4rem; color: var(--primary);">25:00</h1>
+        <button onclick="startTimer()">Start Focus</button>
+    </div>
+</div>
+<script>
+    let time = 25 * 60;
+    function startTimer() {
+        setInterval(() => {
+            time--;
+            let m = Math.floor(time / 60); let s = time % 60;
+            document.getElementById("timer").innerText = m + ":" + (s < 10 ? "0" : "") + s;
+            if(time <= 0) {
+                fetch('/focus', {method: 'POST'}).then(() => { alert("Focus Done! XP Earned."); window.location='/dashboard'; });
+            }
+        }, 1000);
+    }
+</script>
+</body>
+</html>

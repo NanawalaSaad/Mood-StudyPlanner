@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Study Report</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 40px; background: white; color: black;}
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        .print-btn { background: #00c6ff; padding: 10px; color: white; border: none; cursor: pointer;}
+        @media print { .print-btn { display: none; } }
+    </style>
+</head>
+<body>
+    <h1>AI Study Planner - Report</h1>
+    <p>Student: <b>{{ username }}</b></p>
+    <p>Total Attendance: {{ att_count }} Days</p>
+    <table>
+        <tr><th>Subject</th><th>Hours Dedicated</th></tr>
+        {% for sub, hrs in study_data %}<tr><td>{{ sub }}</td><td>{{ hrs }}</td></tr>{% endfor %}
+    </table>
+    <br><button class="print-btn" onclick="window.print()">🖨️ Save as PDF</button>
+</body>
+</html>

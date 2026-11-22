@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Goals & Terms</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .rules-box {
+            height: 300px;
+            overflow-y: scroll;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,78,80,0.4);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: left;
+        }
+        .rules-box p { margin: 5px 0; color: #ccc; font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px;}
+        .rules-box p span { color: #ff4e50; font-weight: bold; margin-right: 10px; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #ff4e50; border-radius: 10px; }
+    </style>
+</head>
+<body>
+<div class="navbar">
+    <h3>🎯 GOALS & RULES</h3>
+    <a href="/dashboard">Dashboard</a>
+</div>
+
+<div class="center" style="align-items: center; padding-top: 40px; padding-bottom: 40px;">
+    <div class="card" style="max-width: 800px; width: 100%;">
+        
+        <h2 style="margin-top:0; color:#ff4e50;">⚠️ 50 SAVAGE RULES OF STUDY</h2>
+        <p style="color: #aaa; margin-bottom: 20px;">Read this before you start. Break a rule, break your future.</p>
+
+        <div class="rules-box">
+            <p><span>01.</span> Phone on DND. No exceptions.</p>
+            <p><span>02.</span> Instagram is an illusion. Your career is reality.</p>
+            <p><span>03.</span> If you open WhatsApp during study, subtract 1 hour.</p>
+            <p><span>04.</span> Deep work means zero tabs open except study material.</p>
+            <p><span>05.</span> Don't just read code. Write it. Break it. Fix it.</p>
+            <p><span>06.</span> Computer Engineering is ruthless; stay updated or perish.</p>
+            <p><span>07.</span> GTU papers require deep analysis, not just night-before reading.</p>
+            <p><span>08.</span> 1 hour of focused coding > 5 hours of distracted reading.</p>
+            <p><span>09.</span> Data Science isn't magic; it's math. Stop running from statistics.</p>
+            <p><span>10.</span> Music without lyrics only. No Bollywood/Pop while studying.</p>
+            <p><span>11.</span> Keep your desk clean. A messy desk is a messy mind.</p>
+            <p><span>12.</span> Hydrate every 45 minutes.</p>
+            <p><span>13.</span> Do not lie to the Planner. Honest hours only.</p>
+            <p><span>14.</span> Attendance is non-negotiable. Show up.</p>
+            <p><span>15.</span> Algorithms require pen and paper. Not just a screen.</p>
+            <p><span>16.</span> If you are stuck on a bug for 1 hour, take a 10-minute walk.</p>
+            <p><span>17.</span> No YouTube Shorts. They destroy attention span.</p>
+            <p><span>18.</span> Sleep 7 hours. A tired brain writes bad code.</p>
+            <p><span>19.</span> Master Python fundamentals before jumping to Machine Learning.</p>
+            <p><span>20.</span> Learn to read Documentation. StackOverflow won't always save you.</p>
+            <p><span>21.</span> Respect your posture. Sit straight.</p>
+            <p><span>22.</span> A 5-minute break means 5 minutes. Not 30.</p>
+            <p><span>23.</span> Don't memorize syntax. Understand the logic.</p>
+            <p><span>24.</span> Commit to Git daily. Build your GitHub graph.</p>
+            <p><span>25.</span> Your laptop is a weapon, not an entertainment box.</p>
+            <p><span>26.</span> Stop complaining about syllabus. Be a self-learner.</p>
+            <p><span>27.</span> If you skip a subject because it's hard, it will fail you.</p>
+            <p><span>28.</span> Eat light before studying. Heavy food equals sleep.</p>
+            <p><span>29.</span> Treat your projects like real-world startup products.</p>
+            <p><span>30.</span> Consistency beats intensity. Code a little every day.</p>
+            <p><span>31.</span> "I'll do it tomorrow" is the slogan of failures.</p>
+            <p><span>32.</span> Track every hour. Time is your only asset.</p>
+            <p><span>33.</span> Be savage about your goals. Don't compromise.</p>
+            <p><span>34.</span> Learn one new tech concept every single day.</p>
+            <p><span>35.</span> Stop multi-tasking. Brains don't process two things at once.</p>
+            <p><span>36.</span> Read the error message properly before panicking.</p>
+            <p><span>37.</span> Networking is important, but skills speak louder.</p>
+            <p><span>38.</span> Do not study in bed. Use a chair and table.</p>
+            <p><span>39.</span> Set daily targets before you sleep.</p>
+            <p><span>40.</span> Avoid cheap dopamine. Earn your entertainment.</p>
+            <p><span>41.</span> Revise. Your brain forgets 70% of data in 24 hours.</p>
+            <p><span>42.</span> Build logic, not just beautiful UIs.</p>
+            <p><span>43.</span> Teach what you learn to someone else.</p>
+            <p><span>44.</span> Don't compete with classmates; compete with your yesterday.</p>
+            <p><span>45.</span> Accept criticism on your code. Ego kills growth.</p>
+            <p><span>46.</span> Learn to use Linux command line.</p>
+            <p><span>47.</span> If it works, figure out WHY it works.</p>
+            <p><span>48.</span> Take care of your eyes. Use blue light filters.</p>
+            <p><span>49.</span> Trust the process. Mastery takes years.</p>
+            <p><span>50.</span> Success is 100% your responsibility. No excuses.</p>
+        </div>
+
+        <hr style="border-color: rgba(255,255,255,0.1); margin: 30px 0;">
+
+        <h2 style="color:var(--primary); text-align:left;">Set Your Specific Goals</h2>
+        <form method="POST" style="display:flex; gap:10px;">
+            <input name="goal" placeholder="e.g. Master CNNs by Friday" required style="margin:0;">
+            <button type="submit" style="margin:0; width:auto; padding:0 30px;">ADD</button>
+        </form>
+
+        <ul style="text-align:left; list-style-type:none; padding:0; margin-top:20px;">
+            {% for g in data %}
+                <li style="background:rgba(255,255,255,0.05); padding:15px; border-radius:10px; margin-bottom:10px; border-left: 4px solid var(--secondary); font-size: 16px; font-weight: 500;">
+                    🎯 {{ g[0] }}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+</body>
+</html>

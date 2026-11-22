@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Planner | Login</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="center">
+    <div class="card">
+        <h2 style="margin-top:0;">⚡ WELCOME BACK</h2>
+        <p style="color: #aaa; margin-bottom: 30px;">Login to access your AI Dashboard</p>
+
+        {% if error %}<p style="color: #ff4e50; font-weight:bold;">{{ error }}</p>{% endif %}
+
+        <form method="POST">
+            <input name="username" placeholder="Username" required>
+            <input name="password" type="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+
+        <div style="margin: 20px 0; color: #aaa;">OR</div>
+
+        <div class="video-container" id="camBox" style="display:none;">
+            <video id="video" autoplay></video>
+            <p id="camStatus" style="position:absolute; bottom:5px; width:100%; text-align:center; color:white; background:rgba(0,0,0,0.5); margin:0;">Scanning Face...</p>
+        </div>
+        
+        <button type="button" class="btn-neon" onclick="startFaceLogin()" id="faceBtn">📷 Face ID Login</button>
+
+        <p style="margin-top: 25px;">New User? <a href="/signup" style="color: var(--primary); text-decoration: none;">CREATE ACCOUNT</a></p>
+    </div>
+</div>
+
+<script>
+    const video = document.getElementById('video');
+    async function startFaceLogin() {
+        document.getElementById('faceBtn').style.display = "none";
+        document.getElementById('camBox').style.display = "block";
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.srcObject = stream;
+            setTimeout(captureAndSend, 2000);
+        } catch (err) {
+            alert("Camera access denied!");
+        }
+    }
+
+    function captureAndSend() {
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+        canvas.getContext('2d').drawImage(video, 0, 0);
+        const base64Image = canvas.toDataURL('image/jpeg');
+
+        video.srcObject.getTracks().forEach(t => t.stop());
+        document.getElementById('camStatus').innerText = "Verifying...";
+
+        fetch('/face_login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ image: base64Image })
+        }).then(res => res.json()).then(data => {
+            if(data.status === "success") window.location.href = "/dashboard";
+            else { alert("Login Failed"); location.reload(); }
+        });
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Face Login</title>
+</head>
+<body style="text-align:center;background:black;color:white;">
+
+<h2>Face Login</h2>
+
+<video id="video" width="300" autoplay></video><br><br>
+
+<button onclick="startCam()">Start Camera</button>
+<button onclick="stopCam()">Stop Camera</button>
+<button onclick="login()">Login</button>
+
+<p id="status"></p>
+
+<script>
+let stream;
+
+function startCam(){
+navigator.mediaDevices.getUserMedia({video:true})
+.then(s=>{
+stream=s;
+video.srcObject=s;
+});
+}
+
+function stopCam(){
+if(stream){
+stream.getTracks().forEach(t=>t.stop());
+video.srcObject=null;
+}
+}
+
+function capture(){
+let c=document.createElement("canvas");
+c.width=video.videoWidth;
+c.height=video.videoHeight;
+c.getContext("2d").drawImage(video,0,0);
+return c.toDataURL();
+}
+
+function login(){
+fetch("/face_login",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({image:capture()})
+})
+.then(r=>r.json())
+.then(d=>{
+status.innerText=d.status;
+if(d.status=="success"){
+window.location="/dashboard";
+}
+});
+}
+</script>
+
+</body>
+</html>

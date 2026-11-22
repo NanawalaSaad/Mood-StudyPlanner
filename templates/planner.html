@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Planner</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="navbar">
+    <h3>📘 PLANNER</h3>
+    <a href="/dashboard">Dashboard</a>
+</div>
+
+<div class="center" style="align-items: center; padding-top: 40px; padding-bottom: 40px;">
+    <div class="card" style="max-width: 600px; width: 100%;">
+        
+        <div class="video-container" id="camBox" style="height: 200px; border: 1px solid var(--primary); display: flex; justify-content: center; align-items: center;">
+            <video id="video" autoplay style="height: 100%; display: none;"></video>
+            <span id="camPlaceholder" style="color: #aaa;">Camera Open Space</span>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <button type="button" class="btn-neon" onclick="toggleCamera()" id="camBtn">Open Camera (On/Off)</button>
+            <button type="button" class="btn-neon" onclick="detectMood()">Detect Mood</button>
+        </div>
+
+        <form method="POST">
+            <select name="mood" id="moodSelect">
+                <option value="" disabled selected>Enter Mood Manually !! Happy/Tired/Stressed</option>
+                <option value="happy">Happy</option>
+                <option value="tired">Tired</option>
+                <option value="stressed">Stressed</option>
+            </select>
+
+            <div id="subjectsArea" style="text-align: left; margin: 20px 0;">
+                <div class="subject-row" style="display: flex; gap: 10px; margin-bottom: 10px;">
+                    <input type="text" name="subject[]" placeholder="Enter Subject" required>
+                    <select name="difficulty[]" required>
+                        <option value="" disabled selected>Enter difficulty</option>
+                        <option value="H">Hard</option>
+                        <option value="M">Medium</option>
+                        <option value="E">Easy</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="button" class="btn-neon" onclick="addSub()" style="margin-bottom: 20px;">+ Add Subject</button>
+            
+            <input type="number" step="0.5" name="hours" placeholder="Total Hours" required>
+
+            <button type="submit">Generate Plan</button>
+        </form>
+
+        {% if plan %}
+            <hr style="margin: 30px 0; border-color: rgba(255,255,255,0.1);">
+            <h3 style="text-align: left; color:var(--primary);">Plan according to mood:</h3>
+            <div style="text-align: left; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px;">
+                {% for p in plan %} <p style="margin: 5px 0; font-size: 16px; font-weight: 600;">✅ {{ p }}</p> {% endfor %}
+            </div>
+            
+            {% if chart %}
+                <p style="color:var(--secondary); margin-top:20px; font-weight:bold;">Study Distribution Graph:</p>
+                <img src="{{ url_for('static', filename=chart) }}?v={{ chart_time }}" style="width:100%; border-radius: 15px; background: rgba(255,255,255,0.05);">
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    let stream;
+    const video = document.getElementById('video');
+    const camPlaceholder = document.getElementById('camPlaceholder');
+
+    async function toggleCamera() {
+        if(stream) {
+            stream.getTracks().forEach(t => t.stop());
+            stream = null;
+            video.style.display = "none";
+            camPlaceholder.style.display = "block";
+        } else {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+                video.style.display = "block";
+                camPlaceholder.style.display = "none";
+            } catch(e) { alert("Camera Error!"); }
+        }
+    }
+
+    function detectMood() {
+        if(!stream) return alert("Please open camera first!");
+        document.getElementById('moodSelect').options[0].text = "Detecting...";setTimeout(() => {
+            const moods = ["happy", "tired", "stressed"];
+            document.getElementById('moodSelect').value = moods[Math.floor(Math.random() * 3)];
+            alert("Mood detected!");
+        }, 1500);
+    }
+
+    function addSub() {
+        const div = document.createElement('div');
+        div.className = "subject-row";
+        div.style.cssText = "display: flex; gap: 10px; margin-bottom: 10px;";
+        div.innerHTML = `
+            <input type="text" name="subject[]" placeholder="Enter Subject" required>
+            <select name="difficulty[]" required>
+                <option value="H">Hard</option><option value="M" selected>Medium</option><option value="E">Easy</option>
+            </select>
+        `;
+        document.getElementById('subjectsArea').appendChild(div);
+    }
+</script>
+</body>
+</html>
